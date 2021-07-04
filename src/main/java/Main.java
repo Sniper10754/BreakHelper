@@ -6,7 +6,7 @@ public class Main {
         SignalHandler handler = new SignalHandler() {
             @Override
             public void run() {
-                System.out.println("Interrotto");
+                System.out.println("Interrupted");
             }
         };
 
@@ -14,9 +14,9 @@ public class Main {
             try {
                 Thread.sleep(4000);
             } catch (InterruptedException e) {
-                System.err.println("Non fatto :(");
+                System.err.println("Not done :(");
             }
-            System.out.println("Fatto!");
+            System.out.println("Done!");
         }, handler
         );
 
