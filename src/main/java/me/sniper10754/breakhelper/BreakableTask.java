@@ -1,6 +1,10 @@
 package me.sniper10754.breakhelper;
 
 public class BreakableTask extends Thread {
+    Thread shutdownHook = new Thread(() -> {
+        this.handleCTRLC(BreakableTask.this.handler);
+        this.afterTask.run();
+    });
     volatile Boolean isBreakable=false;
     Runnable task;
     SignalHandler handler;
@@ -29,10 +33,7 @@ public class BreakableTask extends Thread {
         isBreakable=true;
 
         try {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                BreakableTask.this.handleCTRLC(BreakableTask.this.handler);
-                this.afterTask.run();
-            }));
+            Runtime.getRuntime().addShutdownHook(shutdownHook);
 
             try {
                 task.run();
@@ -48,7 +49,7 @@ public class BreakableTask extends Thread {
                     , e
             );
         } catch (IllegalStateException e) {
-            throw new IllegalStateException("Java Virtual Machine is already shutting down.", e);
+            shutdownHook.start();
         }
     }
 }
