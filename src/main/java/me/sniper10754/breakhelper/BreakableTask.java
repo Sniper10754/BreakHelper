@@ -28,18 +28,27 @@ public class BreakableTask extends Thread {
     public void run() {
         isBreakable=true;
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            BreakableTask.this.handleCTRLC(BreakableTask.this.handler);
-            this.afterTask.run();
-        }));
-
         try {
-            task.run();
-        } catch (Throwable e) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                BreakableTask.this.handleCTRLC(BreakableTask.this.handler);
+                this.afterTask.run();
+            }));
 
-        } finally {
-            isBreakable=false;
+            try {
+                task.run();
+            } catch (Throwable e) {
+
+            } finally {
+                isBreakable=false;
+            }
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                            "the specified hook has already been registered,\n" +
+                            "or it can't be determined that the hook is already running or has already been run"
+                    , e
+            );
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException("Java Virtual Machine is already shutting down.", e);
         }
-
     }
 }

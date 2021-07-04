@@ -5,9 +5,7 @@ import me.sniper10754.breakhelper.SignalHandler;
 public class Main implements ProgramFlow {
     public static void main(String[] args) {
 
-        SignalHandler handler = () -> System.out.println("Interrupted");
-
-        BreakableTask task = new BreakableTask(new Main(), handler);
+        BreakableTask task = new BreakableTask(new Main(), () -> System.out.println("Interrupted"));
 
         task.start();
     }
@@ -25,5 +23,10 @@ public class Main implements ProgramFlow {
     @Override
     public void afterBreak() {
         System.out.println("After!");
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            System.err.println(e.toString());
+        }
     }
 }
