@@ -1,9 +1,9 @@
 package me.sniper10754.breakhelper;
 
 public class BreakableTask extends Thread {
+    volatile Boolean isBreakable=false;
     Runnable task;
     SignalHandler handler;
-    volatile boolean isBreakable=false;
 
     public BreakableTask(Runnable task, SignalHandler handler) {
         this.handler=handler;
